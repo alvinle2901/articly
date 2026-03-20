@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'data/models/article.dart';
 import 'features/home/providers/articles_provider.dart';
+import 'features/home/screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,11 +21,8 @@ class MyApp extends ConsumerWidget {
     final articles = ref.watch(articlesProvider);
     return MaterialApp(
       title: 'Read Later',
-      home: Scaffold(
-        body: Center(
-          child: Text('${articles.length} articles saved'),
-        ),
-      ),
+      home: const HomeScreen(),
+
     );
   }
 }
