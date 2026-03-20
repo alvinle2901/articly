@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/articles_provider.dart';
 import '../widgets/article_card.dart';
 import '../widgets/empty_state.dart';
-// import '../../add_article/screens/add_article_screen.dart';
+import '../../add_article/screens/add_article_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -52,11 +52,10 @@ class HomeScreen extends ConsumerWidget {
               },
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        // onPressed: () => Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (_) => const AddArticleScreen()),
-        // ),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AddArticleScreen()),
+        ),
         backgroundColor: const Color(0xFF1A1A1A),
         child: const Icon(Icons.add, color: Colors.white),
       ),
