@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'data/models/article.dart';
+import 'features/home/providers/articles_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,13 +12,19 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final articles = ref.watch(articlesProvider);
     return MaterialApp(
       title: 'Read Later',
-      home: Scaffold(body: Center(child: Text('Hello!'))),
+      home: Scaffold(
+        body: Center(
+          child: Text('${articles.length} articles saved'),
+        ),
+      ),
     );
   }
 }
