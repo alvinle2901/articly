@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/article.dart';
 import '../providers/articles_provider.dart';
-// import '../../article_detail/screens/article_detail_screen.dart';
+import '../../article_detail/screens/article_detail_screen.dart';
 
 class ArticleCard extends ConsumerWidget {
   final Article article;
@@ -24,12 +24,12 @@ class ArticleCard extends ConsumerWidget {
       ),
       onDismissed: (_) => ref.read(articlesProvider.notifier).delete(article.id),
       child: GestureDetector(
-        // onTap: () => Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (_) => ArticleDetailScreen(article: article),
-        //   ),
-        // ),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ArticleDetailScreen(article: article),
+          ),
+        ),
         child: Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
