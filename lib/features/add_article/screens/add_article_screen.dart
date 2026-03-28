@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/add_article_provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddArticleScreen extends ConsumerStatefulWidget {
   const AddArticleScreen({super.key});
@@ -49,6 +52,13 @@ class _AddArticleScreenState extends ConsumerState<AddArticleScreen> {
           icon: const Icon(Icons.close, color: Color(0xFF1A1A1A)),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.image_outlined, color: Color(0xFF1A1A1A)),
+            tooltip: 'Save from screenshot',
+            onPressed: state is AsyncLoading ? null : _pickImage,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -262,4 +272,18 @@ class _AddArticleScreenState extends ConsumerState<AddArticleScreen> {
           tags: _tags,
         );
   }
+
+  // Add inside the class
+final _picker = ImagePicker();
+
+Future<void> _pickImage() async {
+  final picked = await _picker.pickImage(source: ImageSource.gallery);
+  if (picked == null) return;
+  ref.read(addArticleProvider.notifier).saveFromImage(
+    File(picked.path),
+    tags: _tags,
+  );
+}
+
+  
 }
