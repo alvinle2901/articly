@@ -56,52 +56,28 @@ class AddArticleNotifier extends AsyncNotifier<Article?> {
   }
 
   Future<void> saveFromImage(File imageFile, {List<String> tags = const []}) async {
-  state = const AsyncLoading();
+    state = const AsyncLoading();
 
-  final extraction = await _imageExtractor.extractFromImage(imageFile);
-  if (extraction == null) {
-    state = AsyncError('Could not read text from image', StackTrace.current);
-    return;
-  }
-
-  // Try to find real URL
-  String? url = await _searchService.findArticleUrl(
-    extraction.title,
-    extraction.author,
-    extraction.publication,
-  );
-
-  // If not found, fall back to Google search URL for user to resolve manually
-  final isResolved = url != null;
-  url ??= _searchService.buildSearchUrl(
-    extraction.title,
-    extraction.author,
-    extraction.publication,
-  );
-
-  String? thumbnail, description;
-  try {
-    if (isResolved) {
-      final meta = await AnyLinkPreview.getMetadata(link: url);
-      thumbnail   = meta?.image;
-      description = meta?.desc;
+    final extraction = await _imageExtractor.extractFromImage(imageFile);
+    if (extraction == null) {
+      state = AsyncError('Could not read text from image', StackTrace.current);
+      return;
     }
-  } catch (_) {}
 
-  final article = Article(
-    id: const Uuid().v4(),
-    url: url,
-    title: extraction.title,
-    author: extraction.author,
-    thumbnailUrl: thumbnail,
-    description: description,
-    savedAt: DateTime.now(),
-    tags: tags,
-    isRead: false,
-  );
+    // Resolve URL from OCR fields, then save using URL metadata pipeline.
+    final resolvedUrl = await _searchService.findArticleUrl(
+      extraction.title,
+      extraction.author,
+      extraction.publication,
+    );
 
-  await ref.read(articleRepositoryProvider).save(article);
-  ref.invalidate(articlesProvider);
-  state = AsyncData(article);
-}
+    final urlToSave = resolvedUrl ??
+        _searchService.buildSearchUrl(
+          extraction.title,
+          extraction.author,
+          extraction.publication,
+        );
+
+    await saveFromUrl(urlToSave, tags: tags);
+  }
 }
