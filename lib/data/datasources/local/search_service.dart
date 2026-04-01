@@ -22,8 +22,6 @@ class SearchService {
       'q': query,
     });
 
-    print('URI: $uri');
-
     final response = await http.get(uri, headers: {
       'Accept': 'application/json',
       'Accept-Encoding': 'gzip',
@@ -38,8 +36,6 @@ class SearchService {
     final data = jsonDecode(response.body);
     final results = data['web']?['results'] as List?;
     if (results == null || results.isEmpty) return null;
-
-    print('🔗 Found URLs (first 10): ${results.map((r) => r['url']).take(10).toList()}');
 
     for (final result in results) {
       final url = result['url'] as String? ?? '';

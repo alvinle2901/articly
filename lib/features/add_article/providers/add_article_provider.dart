@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:any_link_preview/any_link_preview.dart';
+import 'package:articly/core/utils/extract_metadata.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../data/models/article.dart';
@@ -29,23 +29,21 @@ class AddArticleNotifier extends AsyncNotifier<Article?> {
       return;
     }
 
-    String title = rawUrl;
-    String? thumbnail, author, description;
-    try {
-      final meta = await AnyLinkPreview.getMetadata(link: rawUrl);
-      title       = meta?.title ?? rawUrl;
-      thumbnail   = meta?.image;
-      // author      = meta?.author;
-      description = meta?.desc;
-    } catch (_) {}
+    final data = await extractMetadata(rawUrl);
+    // print(data["og:title"]);
+    // print(data["article:published_time"]);
+    // print(data["og:description"]);
+    // print(data["og:image"]);
+    // print(data["author"]);
+    // print(data["jsonLd"]);
 
     final article = Article(
       id: const Uuid().v4(),
       url: rawUrl,
-      title: title,
-      thumbnailUrl: thumbnail,
-      author: author,
-      description: description,
+      title: data["og:title"],
+      thumbnailUrl: data["og:image"],
+      author: data["author"],
+      description: data["og:description"],
       savedAt: DateTime.now(),
       tags: tags,
     );
